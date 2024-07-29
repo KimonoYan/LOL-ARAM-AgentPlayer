@@ -11,6 +11,26 @@ if !A_IsAdmin
 	Run *RunAs "%A_AhkPath%" /r "%A_ScriptFullPath%"
 
 
+
+; 全局变量定义
+MoveFlag := 0
+FollowTargetFlag := 0
+
+; 定义默认的跟随位置左边（通常在正中间偏右一点的位置）
+DefaultposX = 760
+DefaultposY = 540
+
+; 定义搜索范围的左上角和右下角坐标
+StartX := 10
+StartY := 180
+EndX := 1200
+EndY := 850
+
+; 红色目标的匹配程度允许的容差，越高越癫
+RedCrazyLevel := 1
+
+
+
 ;这个是启动按键组
 F1::  
 	If (OpenFlag)
@@ -19,21 +39,40 @@ F1::
 		SetTimer, Move, off
 		SetTimer, UIDetect, off
 		SetTimer, SearchEnemy, off
+		SetTimer, ChangeFlag, off
 		OpenFlag := ""	
 	}
 	Else  
     	{  
-		SetTimer, Action, 550
-		SetTimer, Move, 50
-		SetTimer, UIDetect, 1500
+		SetTimer, Action, 3500
+		SetTimer, Move, 180
+		SetTimer, UIDetect, 2500
 		SetTimer, SearchEnemy, 500
+		SetTimer, ChangeFlag, 30000
 		OpenFlag := 1
 	}
 
 Return
 
 
+ChangeFlag:
+FollowTargetFlag := FollowTargetFlag + 1
+if(FollowTargetFlag > 1)
+{
+	FollowTargetFlag := 0
+}
+Return
+
+
 UIDetect:
+
+;这里2.5s进行一次移动位置的改变
+MoveFlag := MoveFlag + 1
+if(MoveFlag > 2)
+{
+	MoveFlag := 0
+}
+
 if(GetColor(525,180)=="0x1A2128" && GetColor(505,680)=="0xFFFFFF")   ; 在房间且对局是亮的
 {
 	Click 505,680
@@ -46,21 +85,15 @@ if(GetColor(636,657)=="0x333B42" || GetColor(639,657)=="0x36484F")	;continue
 {
 	Click 527,683
 }
+if(GetColor(815,560)=="0x2F2748")
+{
+	Click 815,560
+}
 Return
 
 
 
 SearchEnemy:
-
-; 定义默认的跟随位置左边（通常在正中间偏右一点的位置）
-	DefaultposX = 760
-	DefaultposY = 540
-
-; 定义搜索范围的左上角和右下角坐标
-	StartX := 10
-	StartY := 180
-	EndX := 1200
-	EndY := 850
 
 ; 定义红色的颜色值，这里使用RGB(255,0,0)作为示例
 	SearchColor := 0x9A251B
@@ -81,9 +114,9 @@ SearchEnemy:
 
 		MouseMove, 760,540
 		sleep 300
-		Click, Right
+		Click, Left
 		sleep 100
-		Click, Right
+		Click, Left
 		sleep 100
 
 		sendinput {p}
@@ -91,46 +124,87 @@ SearchEnemy:
 		Return
 	}
 
-; 搜索敌人并移动鼠标
-	PixelSearch, 横坐标, 纵坐标, StartX, StartY, EndX, EndY ,0x9A251B, 2, Fast RGB
-	if ErrorLevel
-		MouseMove, DefaultposX,DefaultposY
+; 搜索敌人并移动鼠标: if未找到目标-移动，else找到目标-攻击
+	PixelSearch, 横坐标, 纵坐标, StartX, StartY, EndX, EndY ,0x9A251B, RedCrazyLevel, Fast RGB
+	if (ErrorLevel != 0)
+	{
+		if(MoveFlag == 0)
+		{
+			MouseMove, (DefaultposX-20),(DefaultposY-40)
+		}
+		else if(MoveFlag == 1)
+		{
+			MouseMove, (DefaultposX-80),(DefaultposY+20)
+		}
+		else if(MoveFlag == 2)
+		{
+			MouseMove, (DefaultposX+55),(DefaultposY+20)
+		}
+		
 		;MsgBox, 指定区域没找到！此时会走到土著附近的一个点去
+	}
 	else
 	{
-		;MsgBox,%横坐标%,%纵坐标%，瞄准敌人，开炮！
-		targetX := 横坐标 + 35
-		targetY := 纵坐标 + 70
-		MouseMove, targetX,targetY
-
-
-
-		sendinput rerqw
-		sleep 130
-	
-		sendinput,^r
-		sleep 10
-		sendinput,^w
-		sleep 15
-		sendinput,^e
-		sleep 10
-		sendinput,^q
+		PixelSearch, 玩家位置X, 玩家位置Y, StartX, StartY, EndX, EndY ,0x63DB5D,1, Fast RGB
+		if (ErrorLevel != 0)
+		{
+			;MsgBox, 找bu到玩家 %玩家位置X% %玩家位置Y%！
+		}
+		else{
+			;MsgBox, 找到玩家 %玩家位置X% %玩家位置Y%！
 		
-		sleep 20
+		
+			;MsgBox,%横坐标%,%纵坐标%，瞄准敌人，开炮！
+			targetX := 横坐标 + 35
+			targetY := 纵坐标 + 70
+			MouseMove, targetX,targetY
+			sleep 10
 
-		sendinput re
-		sleep 150
-		sendinput qwrd
+			sendinput rderqw
+			sleep 100
+	
+			sendinput,^r
+			sleep 10
+			sendinput,^w
+			sleep 15
+			sendinput,^e
+			sleep 10
+			sendinput,^q
+			sleep 20
+
+
+			sleep 100
+			sendinput qwrd
+		}
 
 	}
 
 return
 
 
-
+ 
 Move:
-	sendinput {F2}
-	sendinput {v}
+
+
+	;Foucus Player view when encount unhealthy issue
+	if(GetColor(719,1010)=="0x010D07")
+	{
+		sendinput {y}
+		sleep 100
+		sendinput {y}
+
+ 
+	}
+	else{
+		if(FollowTargetFlag == 0){
+			sendinput {F2}
+		}
+		else{
+			sendinput {F4}
+		}
+		sendinput {v}
+	}
+	
 Return
 
 
@@ -147,6 +221,9 @@ Action:
    }
 
 Return
+
+
+
 
 
 
