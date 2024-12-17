@@ -73,15 +73,19 @@ if(MoveFlag > 2)
 	MoveFlag := 0
 }
 
-if(GetColor(525,180)=="0x1A2128" && GetColor(505,680)=="0xFFFFFF")   ; 在房间且对局是亮的
+if((GetColor(525,180)=="0x1A2128" && GetColor(505,680)=="0xFFFFFF") || (GetColor(101,107)=="0x1CA9D7"))   ; 在房间且对局是亮的(乱斗or进步之桥)
 {
 	Click 505,680
 }
-if(GetColor(573,298)=="0x0C3048")   ; 接受
+if(GetColor(573,298)=="0x0C3048" || GetColor(633,324)=="0x006C90" || GetColor(815,560)=="0x081518")   ; 接受
 {
 	Click 593,550
 }
 if(GetColor(636,657)=="0x333B42" || GetColor(639,657)=="0x36484F")	;continue
+{
+	Click 527,683
+}
+if(GetColor(638,655)=="0x01111C" || GetColor(640,657)=="0x383939" || GetColor(971,685)=="0x01111C")	;continue-进步之桥版本
 {
 	Click 527,683
 }
@@ -96,10 +100,11 @@ Return
 SearchEnemy:
 
 ; 定义红色的颜色值，这里使用RGB(255,0,0)作为示例
+	;
 	SearchColor := 0x9A251B
 
 ; 判断是否死亡，如果死亡状态，按P购物
-	if(GetColor(437,1026)=="0x010304" && GetColor(438,1008)=="0x010D07")
+	if((GetColor(437,1026)=="0x010304" && GetColor(438,1008)=="0x010D07") )
 	{
 		;MsgBox, G!
 		sendinput {p}
@@ -221,7 +226,7 @@ Action:
    }
 
 Return
-
+ 
 
 
 
@@ -236,7 +241,7 @@ return color
 }
 
 
-F9::
+F11::
 MouseGetPos, mouseX, mouseY
 PixelGetColor, color, %mouseX%, %mouseY%, RGB
 StringRight color,color,10 ;
