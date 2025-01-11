@@ -26,3 +26,13 @@ You can spend 3 minutes to configure, and let this program help you complete a g
 
 4）双击运行LOL-ARAM-AgentPlayer.ahk脚本，进入大乱斗模式组队页面，按F1启动
 
+
+# 更新日志
+## v1.2.4 
+  将原有代码根据不同的操作系统和屏幕分辨率解耦，以OOP作为基本结构，对代码进行工程化
+
+## v1.2.0 
+  由于频繁的取色问题，将原有代码从ahkv1更新到ahkv2
+
+## v1.1.0 
+  提交支持匹配、完成对局的最小原型，基于ahkv1
