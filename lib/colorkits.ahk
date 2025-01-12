@@ -33,8 +33,6 @@ IsColorSeems(x, y, color)
 	}
 }
 
-
-
 ; 取色组
 GetColor(x, y) {
     color := PixelGetColor(x, y, "RGB")
@@ -61,4 +59,7 @@ F11:: {
     tooltip(mouseX ", " mouseY " 颜色seems：" color, 0, 0)
     Clipboard := IsColorSeems(mouseX, mouseY, color)
 }
+
+;
+; while(pixleDistance(.5*width, 0.04*height, 0x1070C0) > 80 ) ;Click Play Button
 
