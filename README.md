@@ -30,6 +30,7 @@ You can spend 3 minutes to configure, and let this program help you complete a g
 # 更新日志
 ## v1.2.5 
   更新ARAM模式的结构，将识别和攻击逻辑进行分离；
+  
   优化部分识别逻辑，显著增加了1400x1050分辨率下的锁敌性能。
 
 ## v1.2.4 
