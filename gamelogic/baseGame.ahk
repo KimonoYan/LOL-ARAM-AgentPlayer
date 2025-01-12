@@ -1,6 +1,8 @@
 ﻿#Requires AutoHotkey v2.0
 
 #Include ..\lib\colorkits.ahk
+#Include ..\models\searchenemy.ahk
+
 
 ; 创建一个 baseGame 基类，用于继承
 class baseGame {
@@ -81,7 +83,6 @@ class ARAMGame extends baseGame {
     }
 
     Activate() {
-        ToolTip("开启", 0, 0)
         ; 激活游戏窗口，建议用Riot官方的启动器作为background程序，避免发生F1-F4冲突
         if(WinExist("League of Legends (TM) Client")) {
             WinActivate
@@ -118,8 +119,9 @@ class ARAMGame extends baseGame {
         local posX := 0
         local posY := 0
     
-        this.IsFoundEnemy := PixelSearch(&posX, &posY, this.StartX, this.StartY, this.EndX, this.EndY ,0xB13E34, this.RedCrazyLevel)
-        if(this.IsFoundEnemy){  ;1.找到敌人；2.找到敌人的坐标
+        this.IsFoundEnemy := LocateEnemy_FindByImg(&posX, &posY)
+        if(this.IsFoundEnemy){      ;1.找到敌人；2.找到敌人的坐标
+            ; MsgBox "Found Enemy at " posX "x" posY
             this.targetX := posX + 55
             this.targetY := posY + 80
             this.MoveMouseInGame(this.targetX, this.targetY)

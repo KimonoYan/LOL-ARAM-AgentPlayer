@@ -29,7 +29,9 @@ global OpenFlag := 0
 F1::
 {
     global OpenFlag
+    
     if (OpenFlag) {
+        ToolTip("暂停", 0, 0)
         SetTimer(Activate, 0)
         SetTimer(Move, 0)
         SetTimer(UIDetect, 0)
@@ -38,6 +40,7 @@ F1::
         OpenFlag := 0
     }
     else {
+        ToolTip("开启", 0, 0)
         SetTimer(Activate, 5500)
         SetTimer(Move, 1000)
         SetTimer(UIDetect, 2500)
