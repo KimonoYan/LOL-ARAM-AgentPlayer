@@ -30,8 +30,11 @@ You can spend 3 minutes to configure, and let this program help you complete a g
 # 更新日志
 ## v1.2.6 
   更新屏幕识别范围，现在不会出现因目标在边缘，导致窗口错误滑动的情况；
+  
   更新 SearchEnemy() 函数的配准逻辑（将文字方案转为图像方案了）；
+  
   优化该脚本暂停问题，现在允许 alt+tab 暂停，再次按下 alt+tab 时退出脚本；
+  
   优化了高屏幕分辨率下的大厅识别相关功能。
   
 
