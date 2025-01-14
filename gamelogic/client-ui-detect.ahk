@@ -42,6 +42,12 @@ class lobbydetector {
     ;        lobby-resolution = 1280x720
     ;        game-resolution = 1400x1050
     UIDetect_High() {
+
+        ; 如果有游戏进程，直接返回
+        if (WinExist("League of Legends (TM) Client")) {
+            return
+        }
+
         if (GetColor(155, 163) == "0x1A4F5A")   ; 在房间(乱斗)
         {
             MouseClick("left", 800, 1020, 1)
@@ -51,7 +57,7 @@ class lobbydetector {
             MouseClick("left", 950, 830, 1)
         }
         if (GetColor(987, 986) == "0x242423" || GetColor(979, 987) == "0x01121C" || GetColor(84, 79) == "0x3C3D3D" ||
-        GetColor(53, 44) == "0x060C10")	;大厅：再来一场
+        GetColor(53, 44) == "0x060C10" || GetColor(118, 205) == "0x0ACBE6" || GetColor(55, 46) == "0xBDAB7D")	; 大厅：再来一场  会产生全局干扰
         {
             MouseClick("left", 800, 1020, 1)
         }
@@ -73,14 +79,17 @@ class lobbydetector {
         {
             MouseClick("left", 962, 639, 1)
         }
+
+        ; if (GetColor(932, 51 == "0xDDD5C3")) {  ;; 评价
+        ;     MouseClick("left", 962, 1000, 1)
+        ; }
+
     }
 
     UIDetect_Low() {
         return -1
     }
 }
-
-
 
 ;; these macros are used to detect the LOL-lobby UI
 

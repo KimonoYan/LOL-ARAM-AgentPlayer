@@ -2,7 +2,7 @@
 
 #Include ..\lib\colorkits.ahk
 #Include ..\models\searchenemy.ahk
-
+#Include ..\models\indanger.ahk
 
 ; 创建一个 baseGame 基类，用于继承
 class baseGame {
@@ -32,8 +32,24 @@ class baseGame {
         if (this.FollowTargetFlag > 1) {
             this.FollowTargetFlag := 0
         }
-        tooltip "FollowTargetFlag: " this.FollowTargetFlag, 0, 0
+        ; tooltip "FollowTargetFlag: " this.FollowTargetFlag, 0, 0
         return
+    }
+
+    Is_Ingame() {
+        ; 判断是否在游戏中
+        return
+    }
+
+    Is_BlueTeam() {
+        ; 判断是否是蓝色方
+        return
+    }
+
+    Is_PlayerNear(){    ;判断自己是否在屏幕范围内
+        
+        return true
+
     }
     ; 成员函数
 }
@@ -69,6 +85,7 @@ class ARAMGame extends baseGame {
         this.targetX := 0
         this.targetY := 0
         this.IsFoundEnemy := 0
+        this.State_Enmergency := 0
 
     }
 
@@ -85,12 +102,19 @@ class ARAMGame extends baseGame {
     }
 
     Move() {
+        ; 如果没有游戏进程，直接返回
+        if(!WinExist("League of Legends (TM) Client")) {
+            return
+        }
         ; Focus Player view when encountering an unhealthy issue
-        if (GetColor(719, 1010) == "0x010D07") {
-            SendInput("{y}")
-            Sleep(100)
-            SendInput("{y}")
+        if (IsInDanger() && this.State_Enmergency == 0) {
+            OnEmergency()
+            this.State_Enmergency := 1
         } else {
+            if(IsColorSeems(1106,1053,"0x93865D")){ ; 解除锁定视角
+                SendInput("{y}")           
+            }
+
             if (this.FollowTargetFlag == 0) {
                 SendInput("{F2}")
             } else {
@@ -102,24 +126,36 @@ class ARAMGame extends baseGame {
     }
 
     SearchEnemy() {
-
+        ; 如果没有游戏进程，直接返回
+        if(!WinExist("League of Legends (TM) Client")) {
+            return
+        }
         ; 判断是否死亡，如果死亡状态，按P购物
         if (this.IsPlayerDead()) {
             this.Shopping()
+            this.State_Enmergency := 0  ; 重置紧急状态
         }
         local posX := 0
         local posY := 0
     
+        ; T1 := GetTickCount()
         this.IsFoundEnemy := LocateEnemy_FindByImg(&posX, &posY, this.StartX, this.StartY, this.EndX, this.EndY)
+        ; T2 := GetTickCount()
+        ; ToolTip "IsFoundEnemy: " this.IsFoundEnemy " Time: " T2 - T1  ; 这里测试过时间，仅16~31ns
+
         if(this.IsFoundEnemy){      ;1.找到敌人；2.找到敌人的坐标
             ; MsgBox "Found Enemy at " posX "x" posY
             this.targetX := posX + 55
             this.targetY := posY + 80
             this.MoveMouseInGame(this.targetX, this.targetY)
             sleep(10)
-            this.GrazySkill()
+            if(this.Is_PlayerNear())
+            {
+                this.GrazySkill()
+            }
         }
         else{
+            sleep(400)
             this.MoveMouseInGame(0.5 * ScreenX, 0.5 * ScreenY)
         }
     
@@ -153,7 +189,6 @@ class ARAMGame extends baseGame {
     }
 
     Shopping() {
-        ;MsgBox, G!
         SendInput("{p}")
         Sleep(100)
 
@@ -185,19 +220,11 @@ class ARAMGame extends baseGame {
         if (this.FollowTargetFlag > 1) {
             this.FollowTargetFlag := 0
         }
-        tooltip "FollowTargetFlag: " this.FollowTargetFlag, 0, 0
+        ; tooltip "FollowTargetFlag: " this.FollowTargetFlag, 0, 0
         return
     }
 
-    Is_Ingame() {
-        ; 判断是否在游戏中
-        return
-    }
 
-    Is_BlueTeam() {
-        ; 判断是否是蓝色方
-        return
-    }
 
 }
 
@@ -207,4 +234,10 @@ class SRGame extends baseGame {
         MsgBox "SRGame 对象已创建"
     }
 
+}
+
+
+GetTickCount()
+{
+    return DllCall("kernel32.dll\GetTickCount", "UInt")
 }
