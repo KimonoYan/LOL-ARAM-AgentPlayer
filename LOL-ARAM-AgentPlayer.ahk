@@ -29,27 +29,56 @@ global OpenFlag := 0
 F1::
 {
     global OpenFlag
-    
     if (OpenFlag) {
-        ToolTip("暂停", 0, 0)
-        SetTimer(Activate, 0)
-        SetTimer(Move, 0)
-        SetTimer(UIDetect, 0)
-        SetTimer(SearchEnemy, 0)
-        SetTimer(ChangeFlag, 0)
-        OpenFlag := 0
+        StopScript()
     }
     else {
-        ToolTip("开启", 0, 0)
-        SetTimer(Activate, 5500)
-        SetTimer(Move, 1000)
-        SetTimer(UIDetect, 2500)
-        SetTimer(SearchEnemy, 600)
-        SetTimer(ChangeFlag, 30000)
-        OpenFlag := 1
+        StartScript()  
     }
     return
+}   
+
+;按tab+alt键时，停止脚本，同时不影响windows默认的切换窗口功能
+!Tab:: 
+{
+    global OpenFlag
+    If (OpenFlag == 0){
+        ExitApp
+    }
+    StopScript()
+    ; 退出脚本
+    return
 }
+; Alt & Tab::
+; {
+;     StopScript()
+;     return
+; }
+
+
+StopScript() {
+    global OpenFlag
+    ToolTip("暂停", 0, 0)
+    SetTimer(Activate, 0)
+    SetTimer(Move, 0)
+    SetTimer(UIDetect, 0)
+    SetTimer(SearchEnemy, 0)
+    SetTimer(ChangeFlag, 0)
+    OpenFlag := 0
+    return
+}
+StartScript() {
+    global OpenFlag
+    ToolTip("开启", 0, 0)
+    SetTimer(Activate, 5500)
+    SetTimer(Move, 1000)
+    SetTimer(UIDetect, 2500)
+    SetTimer(SearchEnemy, 600)
+    SetTimer(ChangeFlag, 30000)
+    OpenFlag := 1
+    return
+}
+
 
 ; create a new baseGame object
 if (GameMode == "ARAM") {
@@ -64,7 +93,7 @@ else {
     MsgBox "GameMode Error"
 }
 
-Activate() {
+Activate() {  
     if (game != "") {
         game.Activate()
     }

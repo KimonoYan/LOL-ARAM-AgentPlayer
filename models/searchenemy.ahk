@@ -15,13 +15,13 @@ FoundX := FoundY := 0
 ;     SetTimer(LocateEnemy_FindByImg, 1000)
 ; }
 
-LocateEnemy_FindByImg(&posX, &posY)
+LocateEnemy_FindByImg(&posX, &posY, StartX, StartY, EndX, EndY)
 {
     if(!WinExist("League of Legends (TM) Client"))
         return false
 
     ; *5: Allow a 0 to 5 pixel difference for compatible similarity.
-    if(ImageSearch(&posX, &posY, 0, 0, A_ScreenWidth, A_ScreenHeight, "*5 " A_ScriptDir "\models\level2.png"))
+    if(ImageSearch(&posX, &posY, StartX, StartY, EndX, EndY, "*5 " A_ScriptDir "\models\level2.png"))
         return true
         ; ToolTip "The enemy was found at " pos_X "x" pos_Y
     else

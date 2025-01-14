@@ -47,10 +47,10 @@ class ARAMGame extends baseGame {
         this.RedCrazyLevel := 4
 
         If(ScreenX == 1400 && ScreenY == 1050) {
-            this.StartX := 20
-            this.StartY := 200
-            this.EndX := 1100
-            this.EndY := 800
+            this.StartX := 0.1 * ScreenX
+            this.StartY := 0.1 * ScreenY
+            this.EndX := 0.9 * ScreenX
+            this.EndY := 0.9 * ScreenY
             this.x_offset := 55
             this.y_offset := 80
         }
@@ -72,15 +72,6 @@ class ARAMGame extends baseGame {
 
     }
 
-    Is_Ingame() {
-        ; 判断是否在游戏中
-        return
-    }
-
-    Is_BlueTeam() {
-        ; 判断是否是蓝色方
-        return
-    }
 
     Activate() {
         ; 激活游戏窗口，建议用Riot官方的启动器作为background程序，避免发生F1-F4冲突
@@ -119,7 +110,7 @@ class ARAMGame extends baseGame {
         local posX := 0
         local posY := 0
     
-        this.IsFoundEnemy := LocateEnemy_FindByImg(&posX, &posY)
+        this.IsFoundEnemy := LocateEnemy_FindByImg(&posX, &posY, this.StartX, this.StartY, this.EndX, this.EndY)
         if(this.IsFoundEnemy){      ;1.找到敌人；2.找到敌人的坐标
             ; MsgBox "Found Enemy at " posX "x" posY
             this.targetX := posX + 55
@@ -129,7 +120,7 @@ class ARAMGame extends baseGame {
             this.GrazySkill()
         }
         else{
-            ; Move()
+            this.MoveMouseInGame(0.5 * ScreenX, 0.5 * ScreenY)
         }
     
         return
@@ -195,6 +186,16 @@ class ARAMGame extends baseGame {
             this.FollowTargetFlag := 0
         }
         tooltip "FollowTargetFlag: " this.FollowTargetFlag, 0, 0
+        return
+    }
+
+    Is_Ingame() {
+        ; 判断是否在游戏中
+        return
+    }
+
+    Is_BlueTeam() {
+        ; 判断是否是蓝色方
         return
     }
 
