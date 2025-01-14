@@ -47,7 +47,11 @@ F9:: {
     color := SubStr(color, -10)
     ; tooltip, mouseX, mouseY "颜色是：" color
     tooltip(mouseX ", " mouseY " 颜色是：" color, 0, 0)
-    Clipboard := (GetColor(mouseX, mouseY) == color)
+    ; A_Clipboard := (GetColor(mouseX, mouseY) == color)
+	A_Clipboard := "GetColor(" mouseX "," mouseY ")" "=="  '"' color '"' 
+
+	
+	; %mouseX% "," %mouseY% ") == " %color%)
 }
 
 ; 相似取色
@@ -57,7 +61,7 @@ F11:: {
     color := SubStr(color, -10)
     ; IsColorSeems()
     tooltip(mouseX ", " mouseY " 颜色seems：" color, 0, 0)
-    Clipboard := IsColorSeems(mouseX, mouseY, color)
+    A_Clipboard := IsColorSeems(mouseX, mouseY, color)
 }
 
 ;
